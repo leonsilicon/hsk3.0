@@ -18,6 +18,36 @@ The source data follows the official HSK 3.0 standard. See
 - `HSK3.0_not_chengyu.json`: four-character phrases that are not chengyu
 - `HSK3.0_export.json`: manifest with source file metadata and hashes
 
+## Parenthesised Entries
+
+The syllabus uses fullwidth parentheses in a vocabulary entry for two unrelated reasons, and this
+package resolves each in the published JSON so consumers never parse `（）` themselves.
+
+**Optional segment** — both forms are accepted words, so the entry publishes as a tuple,
+shortest first:
+
+| Syllabus | Published | Level |
+| --- | --- | --- |
+| `有（一）些` | `["有些", "有一些"]` | 1 |
+| `有（一）点儿` | `["有点儿", "有一点儿"]` | 2 |
+| `差（一）点儿` | `["差点儿", "差一点儿"]` | 5 |
+| `好（不）容易` | `["好容易", "好不容易"]` | 6 |
+| `茅台（酒）` | `["茅台", "茅台酒"]` | 7–9 |
+
+**Usage example** — the parentheses only show how a bound affix is used, so the entry publishes
+as the bare stem and the example is dropped. `们（朋友们）` is the suffix 们 illustrated by 朋友们;
+it publishes as `"们"`, never `"们朋友们"`. The 22 affected entries are 业、们、初、力、化、员、
+品、头、子、家、小、度、性、感、族、率、界、第、老、者、长 and 非.
+
+Nothing in an entry's text distinguishes the two cases, so the classification is hardcoded in
+`scripts/build.ts`. An unclassified parenthesised entry fails the build rather than being
+guessed at.
+
+```js
+const canonical = hsk30WordsLevel1.map((e) => (Array.isArray(e) ? e.at(-1) : e));
+const allForms = hsk30WordsLevel1.flat();
+```
+
 ## Install
 
 ```bash

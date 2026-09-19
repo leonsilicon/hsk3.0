@@ -1,2 +1,2 @@
-declare const data: string[];
+declare const data: (string | string[])[];
 export default data;
